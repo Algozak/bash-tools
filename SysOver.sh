@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# Colors ANSI codes
+BLACK="\033[30m"
+RED="\033[31m"
+GREEN="\033[32m"
+YELLOW="\033[33m"
+BLUE="\033[34m"
+MAGENTA="\033[35m"
+CYAN="\033[36m"
+WHITE="\033[37m"
+
+#Uptime info
+uptime_info=$(awk '{print $1}' /proc/uptime)
+days=$(echo "$uptime_info / 86400" | bc)
+hours=$(echo "($uptime_info % 86400) / 3600" | bc) 
+minutes=$(echo "$uptime_info % 3600 / 60" | bc)
+
+
+#Cpu Info
+cpu_info() {
+  info=$(grep -m 1 "model name" /proc/cpuinfo)
+  echo "${info#*:}"
+}
+
+#Memory
+totalmem=$(awk '/MemTotal/ {printf "%.2f GB\n", $2/1024^2}' /proc/meminfo)
+availmem=$(awk '/MemAvailable/ {printf "%.2f GB\n", $2/1024^2}' /proc/meminfo) 
+#echo $totalmem
+#echo $availmem
+
+#disk
+read -r size used avail <<< $(df -h / | awk 'NR==2 {print $2,$3,$4}')
+
+#show 
+show () {
+
+printf "$YELLOW╔════════════════════════════════════════════════╗$NC\n" 
+printf "$YELLOW║    $NC $CYAN          System Overview  $NC  $YELLOW              ║$NC\n"
+printf "$YELLOW╠════════════════════════════════════════════════╣$NC\n"
+printf "$YELLOW║$NC$BLUE CPU$NC:$WHITE$(cpu_info)$NC$YELLOW ║$NC\n"
+printf "$YELLOW║$NC$BLUE Memory$NC: $WHITE$availmem$NC $YELLOW/$NC $WHITE$totalmem$NC                      $YELLOW║$NC\n"
+printf "$YELLOW║$NC$BLUE Uptime$NC: $WHITE${days}${NC}${YELLOW}d${NC} $WHITE${hours}${NC}${YELLOW}h$NC $WHITE${minutes}${NC}${YELLOW}m${NC}                             ║$NC\n" 
+printf "$YELLOW║$NC$BLUE Disk$NC: ${YELLOW}size | used | avail                      ║$NC\n" 
+printf "$YELLOW║       ${WHITE}$size    $used    $avail                        $YELLOW║$NC\n"   
+printf "$YELLOW║                                                ║$NC\n"
+printf "$YELLOW╚════════════════════════════════════════════════╝$NC\n"
+
+}
+
+show
