@@ -1,0 +1,63 @@
+#!/bin/bash
+
+
+# Colors ANSI codes
+BLACK="\033[30m"
+RED="\033[31m"
+GREEN="\033[32m"
+YELLOW="\033[33m"
+BLUE="\033[34m"
+MAGENTA="\033[35m"
+CYAN="\033[36m"
+WHITE="\033[37m"
+
+#log file
+log_file="monitor.log"
+
+# Loading Animation
+spiner() {
+  local spin='-\|/'
+  local i=0
+
+  while kill -0 "$pid" 2>/dev/null; do
+    i=$(( (i+1) % 4 ))
+    printf "${WHITE}\r[%c] Monitoring...${NC}" "${spin:$i:1}"
+    sleep 0.1
+  done
+}
+
+#logging
+logging() {
+  local level="$1"
+  local message="$2"
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] [$level] $message (PID $pid)"  >> "$log_file"
+}
+
+#command start
+start_command () {
+  eval "$1" &
+  pid=$!
+  logging "INFO" "Process Started: $1"
+}
+
+
+#Process health check
+proc_check() {
+  while true; do
+    spiner
+    echo -e "${RED}\nThe process has died\n${NC}"
+    echo -e "${BLUE}Restarting process!\n${NC}"
+    echo -e "${GREEN}Logs are saved in monitor.log${NC}"
+    logging "ERROR" "Process Died: $1"
+    sleep 1
+    start_command "$1"
+  done
+}
+
+#main
+main() {
+  start_command "$1"
+  proc_check "$1"
+}
+main "$1"
+
