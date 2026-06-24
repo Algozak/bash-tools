@@ -4,11 +4,13 @@ A Bash tool that inspects a running process and prints a detailed breakdown — 
 
 ## Features
 
+- PPid
 - Process command and state
 - Memory usage (VmRSS)
 - Open file descriptors count
 - Namespaces (PID, NET, MNT)
 - Cgroup path
+- Threads
 - Binary inode and hard link count
 
 ## Installation
@@ -37,24 +39,27 @@ sleep 1000 &
 ### Example output
 
 ```
-╔════════════════════════════════════╗
-║ Process Inspector — PID 47551      ║
-╠════════════════════════════════════╣
-║ Command: sleep 1000                ║
-║ State: S (sleeping)                ║
-║ Memory: 2148 kB                    ║
-║ Open FDs: 4                        ║
-║                                    ║
-║ Namespaces:                        ║
-║ PID: 4026531836                    ║
-║ NET: 4026531840                    ║
-║ MNT: 4026531841                    ║
-║                                    ║
-║ Cgroup: /user.slice/...            ║
-║                                    ║
-║ Binary inode: 12776                ║
-║ Binary links: 1                    ║
-╚════════════════════════════════════╝
+╔══════════════════════════════════╗
+║ Process Inspector: PID - 41444   ║
+╠══════════════════════════════════╣
+║ PPid:        37930               ║
+║ State:       S (sleeping)        ║
+║ Memory:      2348 kB             ║
+║ Open FDs:    12                  ║
+║                                  ║
+║ Namespaces:                      ║
+║ PID:         4026531836          ║
+║ NET:         4026531833          ║
+║ MNT:         4026531832          ║
+║                                  ║
+║ Cgroup: 0::/user.slice/user-10...║
+║                                  ║
+║ Threads:     1                   ║
+║                                  ║
+║ Binary-inode 285543              ║
+║ Binary-links 1:                  ║
+╚══════════════════════════════════╝
+
 ```
 
 ## Notes
